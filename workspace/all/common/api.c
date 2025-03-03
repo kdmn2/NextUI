@@ -1240,6 +1240,34 @@ void GFX_blitMessage(TTF_Font* font, char* msg, SDL_Surface* dst, SDL_Rect* dst_
 	}
 }
 
+int GFX_blitPerformanceMode(SDL_Surface* dst)
+{
+	int ox = 0;
+	int oy = SCALE1(PADDING + BUTTON_MARGIN);
+
+	int currentMhz = PLAT_getCPUFreq() / 1000;
+	int minMhz = PLAT_getCPUFreqMin() / 1000;
+	int maxMhz = PLAT_getCPUFreqMax() / 1000;
+
+	char governor_name[64];
+	PLAT_getCPUGovernor(governor_name, sizeof(governor_name));
+
+	char perf_text[256];
+	sprintf(perf_text, "%i %i %i m:%s g:%s", minMhz, currentMhz, maxMhz, 
+		PLAT_getCPUSpeed() == CPU_SPEED_MENU ? "menu" 
+		: PLAT_getCPUSpeed() == CPU_SPEED_NORMAL ? "norm"
+		: PLAT_getCPUSpeed() == CPU_SPEED_POWERSAVE ? "pow" : "perf", governor_name);
+	
+	int len = strlen(perf_text);
+	if (len) {
+		SDL_Surface* text = TTF_RenderUTF8_Blended(font.tiny, perf_text, COLOR_WHITE);
+		ox += dst->w / 2 - text->w / 2;
+		SDL_BlitSurface(text, NULL, dst, &(SDL_Rect){ox, oy});
+		SDL_FreeSurface(text);
+	}
+	return 5; // ? 
+}
+
 int GFX_blitHardwareGroup(SDL_Surface* dst, int show_setting) {
 	int ox;
 	int oy;
@@ -1328,7 +1356,9 @@ int GFX_blitHardwareGroup(SDL_Surface* dst, int show_setting) {
 		}
 		GFX_blitBattery(dst, &(SDL_Rect){ox,oy});
 	}
-	
+
+	GFX_blitPerformanceMode(dst);
+
 	return ow;
 }
 void GFX_blitHardwareHints(SDL_Surface* dst, int show_setting) {

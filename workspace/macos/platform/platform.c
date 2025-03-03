@@ -487,6 +487,29 @@ void PLAT_setCPUSpeed(int speed) {
 	// buh
 }
 
+int PLAT_getCPUFreqMin(void)
+{
+	return 1000000;
+}
+int PLAT_getCPUFreq(void)
+{
+	return 1234000;
+}
+int PLAT_getCPUFreqMax(void)
+{
+	return 1500000;
+}
+
+int PLAT_getCPUSpeed(void)
+{
+	return CPU_SPEED_PERFORMANCE;
+}
+
+void PLAT_getCPUGovernor(char *name, size_t size)
+{
+	sprintf(name, "%s", "performance");
+}
+
 void PLAT_setRumble(int strength) {
 	// buh
 }

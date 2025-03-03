@@ -425,6 +425,11 @@ int PLAT_deepSleep(void);
 void PLAT_powerOff(void);
 	
 void PLAT_setCPUSpeed(int speed); // enum
+int PLAT_getCPUSpeed(void); //enum
+int PLAT_getCPUFreqMin(void); //hz
+int PLAT_getCPUFreq(void); //hz
+int PLAT_getCPUFreqMax(void); //hz
+void PLAT_getCPUGovernor(char *name, size_t size);
 void PLAT_setRumble(int strength);
 int PLAT_pickSampleRate(int requested, int max);
 

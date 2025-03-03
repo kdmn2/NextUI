@@ -659,6 +659,62 @@ void PLAT_setCPUSpeed(int speed) {
 	putInt(GOVERNOR_PATH, freq);
 }
 
+int PLAT_getCPUFreqMin(void)
+{
+	int i = getInt("/sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq");
+	return i;
+}
+int PLAT_getCPUFreq(void)
+{
+	int i = getInt("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq");
+	return i;
+}
+int PLAT_getCPUFreqMax(void)
+{
+	int i = getInt("/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq");
+	return i;
+}
+
+int PLAT_getCPUSpeed(void)
+{
+	int freq = PLAT_getCPUFreq();
+	switch(freq) {
+		case 600000:
+			return CPU_SPEED_MENU;
+			break;
+		case 1200000:
+			return CPU_SPEED_POWERSAVE;
+			break;
+		case 1608000:
+			return CPU_SPEED_NORMAL;
+			break;
+		case 2000000:
+			return CPU_SPEED_PERFORMANCE;
+			break;
+	}
+	return CPU_SPEED_NORMAL;
+}
+
+void PLAT_getCPUGovernor(char *name, size_t size)
+{
+	FILE *file = fopen("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", "r");
+    if (file == NULL) {
+        LOG_debug("Error opening governor file");
+		return;
+	}
+
+	if (fgets(name, size, file) == NULL) {
+        LOG_debug("Error reading governor file");
+        fclose(file);
+		return;
+	}
+
+	fclose(file);
+
+    // Remove newline character if present
+    name[strcspn(name, "\n")] = '\0';
+}
+
 #define RUMBLE_PATH "/sys/class/gpio/gpio227/value"
 #define RUMBLE_VOLTAGE_PATH "/sys/class/motor/voltage"
 #define MAX_STRENGTH 0xFFFF
