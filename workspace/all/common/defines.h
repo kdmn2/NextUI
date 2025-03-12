@@ -78,6 +78,10 @@
 #define MAX_LIGHTS 0
 #endif
 
+#ifndef MAX_LIGHTS
+#define MAX_LIGHTS 0
+#endif
+
 ///////////////////////////////
 
 #define STR_HELPER(x) #x
