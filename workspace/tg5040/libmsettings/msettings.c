@@ -177,6 +177,9 @@ void InitSettings(void) {
 	system("amixer sset 'Headphone' 0"); // 100%
 	system("amixer sset 'digital volume' 0"); // 100%
 	system("amixer sset 'DAC Swap' Off"); // Fix L/R channels
+	// need to add bluetooth controls here
+	// amixer -D bluealsa controls grab mixer name 
+	// system("amixer sset 'mixername' 0"); // Fix L/R channels
 	// volume is set with 'digital volume'
 	
 	SetVolume(GetVolume());
@@ -345,6 +348,10 @@ void SetRawVolume(int val) { // 0-100
 	// Setting just 'digital volume' to 0 still plays audio quietly. Also set DAC volume to 0
 	if (val == 0) system("amixer sset 'DAC volume' 0 &> /dev/null");
 	else system("amixer sset 'DAC volume' 160 &> /dev/null"); // 160=0dB=max for 'DAC volume'
+		// need to add bluetooth controls here
+	// amixer -D bluealsa controls grab mixer name 
+	// system("amixer sset 'mixername' 0"); // Fix L/R channels
+	
 
 	// TODO: unfortunately doing it this way creating a linker nightmare
 	// struct mixer *mixer = mixer_open(0);

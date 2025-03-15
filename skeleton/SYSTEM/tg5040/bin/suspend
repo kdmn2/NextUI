@@ -17,12 +17,12 @@ before() {
 	mkdir -p "$asound_state_dir"
 	alsactl --file "$asound_state_dir/asound.state.pre" store || true
 
-	if pgrep wpa_supplicant; then
-		wpa_running=1
-		>&2 echo "Stopping wpa_supplicant..."
-		killall -9 wpa_supplicant || true
-	fi
-	ifconfig wlan0 down || true
+	# if pgrep wpa_supplicant; then
+	# 	wpa_running=1
+	# 	>&2 echo "Stopping wpa_supplicant..."
+	# 	killall -9 wpa_supplicant || true
+	# fi
+	# ifconfig wlan0 down || true
 
 	# if pgrep hciattach; then
 	# 	hciattach_running=1
@@ -34,7 +34,7 @@ before() {
 	# 	>&2 echo "Stopping bluetoothd..."
 	# 	/etc/bluetooth/bluetoothd stop || true
 	# fi
-	bluetoothctl power off || true
+	# bluetoothctl power off || true
 
 	# >&2 echo "Blocking wireless..."
 	# echo 0 >/sys/class/rfkill/rfkill0/state || true
@@ -50,12 +50,12 @@ after() {
 	# >&2 echo "Unblocking wireless..."
 	# echo 1 >/sys/class/rfkill/rfkill0/state || true
 
-	if [ -n "$wpa_running" ]; then
-		>&2 echo "Starting wpa_supplicant..."
-		wpa_supplicant -B -D nl80211 -iwlan0 -c /etc/wifi/wpa_supplicant.conf -O /etc/wifi/sockets || true
-		(( udhcpc -i wlan0 &)&)
-	fi
-	ifconfig wlan0 up || true
+	# if [ -n "$wpa_running" ]; then
+	# 	>&2 echo "Starting wpa_supplicant..."
+	# 	wpa_supplicant -B -D nl80211 -iwlan0 -c /etc/wifi/wpa_supplicant.conf -O /etc/wifi/sockets || true
+	# 	(( udhcpc -i wlan0 &)&)
+	# fi
+	# ifconfig wlan0 up || true
 	# if [ -n "$hciattach_running" ]; then
 	# 	>&2 echo "Starting hciattach..."
 	# 	/etc/init.d/hciattach start || true
@@ -68,8 +68,8 @@ after() {
 	# 	sleep 2
 	# 	bluetoothctl scan on > /mnt/SDCARD/bluetoothctl.txt
 	# fi
-	bluetoothctl power on || true
-	bluetoothctl scan on || true
+	# bluetoothctl power on || true
+	# bluetoothctl scan on || true
 
 }
 
@@ -79,4 +79,4 @@ before
 echo mem >/sys/power/state
 
 # Resume services in background to reduce UI latency
-(( after &> /mnt/SDCARD/deepsleep.log)&)
+(( after &)&)
