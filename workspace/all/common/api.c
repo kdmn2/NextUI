@@ -1367,7 +1367,7 @@ void GFX_blitText(TTF_Font* font, char* str, int leading, SDL_Color color, SDL_S
 // to (try to) understand it 
 // better
 
-#define MAX_SAMPLE_RATE 48000
+#define MAX_SAMPLE_RATE 44100
 #define BATCH_SIZE 100
 #ifndef SAMPLES
 	#define SAMPLES 512 // default
@@ -1646,7 +1646,10 @@ void SND_init(double sample_rate, double frame_rate) { // plat_sound_init
 	LOG_info("SND_init\n");
 	currentreqfps = frame_rate;
 	SDL_InitSubSystem(SDL_INIT_AUDIO);
-	
+	PLAT_setBluetoothaudio();
+
+		
+		
 #if defined(USE_SDL2)
 	LOG_info("Available audio drivers:\n");
 	for (int i=0; i<SDL_GetNumAudioDrivers(); i++) {
@@ -2314,7 +2317,7 @@ static void PWR_waitForWake(void) {
 			break;
 		}
 		SDL_Delay(200);
-		if (SDL_GetTicks()-sleep_ticks>=120000) { // increased to two minutes
+		if (SDL_GetTicks()-sleep_ticks>=30000) { // increased to two minutes
 			if (pwr.is_charging) {
 				sleep_ticks += 60000; // check again in a minute
 				continue;

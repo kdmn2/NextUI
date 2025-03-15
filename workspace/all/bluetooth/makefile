@@ -27,7 +27,7 @@ CC = $(CROSS_COMPILE)gcc
 CFLAGS   = $(ARCH) -fomit-frame-pointer
 CFLAGS  += $(INCDIR) -DPLATFORM=\"$(PLATFORM)\" -DUSE_$(SDL)  -Ofast 
 LDFLAGS	 = -ldl $(LIBS) -l$(SDL) -l$(SDL)_image -l$(SDL)_ttf -lpthread -lm -lz
-LDFLAGS +=  -lmsettings
+LDFLAGS +=  -lmsettings -lbluetooth
 
 PRODUCT= build/$(PLATFORM)/$(TARGET).elf
 

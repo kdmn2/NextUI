@@ -8,6 +8,8 @@ bluetoothd_running=
 
 asound_state_dir=/tmp/asound-suspend
 
+# honestely I don't know what is the point of manually suspending all these services and hardware etc? Shouldn't t he OS's power states handle this correctly? 
+# I did notice bluetooth stays active during sleep, but BT can be veeery low power, so maybe thats intentional by the OS power state?
 before() {
 	>&2 echo "Preparing for suspend..."
 
@@ -22,20 +24,20 @@ before() {
 	fi
 	ifconfig wlan0 down || true
 
-	if pgrep hciattach; then
-		hciattach_running=1
-		>&2 echo "Stopping hciattach..."
-		/etc/init.d/hciattach stop || true
-	fi
-	if pgrep bluetoothd; then
-		bluetoothd_running=1
-		>&2 echo "Stopping bluetoothd..."
-		/etc/bluetooth/bluetoothd stop || true
-		killall -15 bluealsa || true
-	fi
+	# if pgrep hciattach; then
+	# 	hciattach_running=1
+	# 	>&2 echo "Stopping hciattach..."
+	# 	/etc/init.d/hciattach stop || true
+	# fi
+	# if pgrep bluetoothd; then
+	# 	bluetoothd_running=1
+	# 	>&2 echo "Stopping bluetoothd..."
+	# 	/etc/bluetooth/bluetoothd stop || true
+	# fi
+	bluetoothctl power off || true
 
-	>&2 echo "Blocking wireless..."
-	echo 0 >/sys/class/rfkill/rfkill0/state || true
+	# >&2 echo "Blocking wireless..."
+	# echo 0 >/sys/class/rfkill/rfkill0/state || true
 }
 
 after() {
@@ -45,24 +47,30 @@ after() {
 	alsactl --file "$asound_state_dir/asound.state.post" store || true
 	alsactl --file "$asound_state_dir/asound.state.pre" restore || true
 
-	>&2 echo "Unblocking wireless..."
-	echo 1 >/sys/class/rfkill/rfkill0/state || true
+	# >&2 echo "Unblocking wireless..."
+	# echo 1 >/sys/class/rfkill/rfkill0/state || true
 
 	if [ -n "$wpa_running" ]; then
 		>&2 echo "Starting wpa_supplicant..."
 		wpa_supplicant -B -D nl80211 -iwlan0 -c /etc/wifi/wpa_supplicant.conf -O /etc/wifi/sockets || true
 		(( udhcpc -i wlan0 &)&)
 	fi
+	ifconfig wlan0 up || true
+	# if [ -n "$hciattach_running" ]; then
+	# 	>&2 echo "Starting hciattach..."
+	# 	/etc/init.d/hciattach start || true
+	# fi
+	# if [ -n "$bluetoothd_running" ]; then
+	# 	echo "Starting bluetoothd..."
+	# 	/etc/bluetooth/bluetoothd start
+	# 	sleep 5
+	# 	/usr/bin/bluetoothctl power on
+	# 	sleep 2
+	# 	bluetoothctl scan on > /mnt/SDCARD/bluetoothctl.txt
+	# fi
+	bluetoothctl power on || true
+	bluetoothctl scan on || true
 
-	if [ -n "$hciattach_running" ]; then
-		>&2 echo "Starting hciattach..."
-		/etc/init.d/hciattach start || true
-	fi
-	if [ -n "$bluetoothd_running" ]; then
-		>&2 echo "Starting bluetoothd..."
-		/etc/bluetooth/bluetoothd start || true
-		/usr/bin/bluetoothctl power on || true
-	fi
 }
 
 before
@@ -71,4 +79,4 @@ before
 echo mem >/sys/power/state
 
 # Resume services in background to reduce UI latency
-(( after &)&)
+(( after &> /mnt/SDCARD/deepsleep.log)&)

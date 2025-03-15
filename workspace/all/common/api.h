@@ -429,6 +429,6 @@ void PLAT_setLedBrightness(LightSettings *led);
 void PLAT_setLedInbrightness(LightSettings *led);
 void PLAT_setLedEffectSpeed(LightSettings *led);
 void PLAT_setLedEffectCycles(LightSettings *led);
-
+void PLAT_setBluetoothaudio();
 
 #endif

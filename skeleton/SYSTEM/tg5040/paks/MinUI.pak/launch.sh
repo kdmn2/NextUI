@@ -93,11 +93,11 @@ CPU_SPEED_PERF=2000000
 echo $CPU_SPEED_PERF > $CPU_PATH
 
 # disable internet stuff
-rfkill block bluetooth
-rfkill block wifi
-killall udhcpc
-killall MtpDaemon
-/etc/init.d/wpa_supplicant stop # not sure this is working
+# rfkill block bluetooth
+# rfkill block wifi
+# killall udhcpc
+# killall MtpDaemon
+# /etc/init.d/wpa_supplicant stop # not sure this is working
 
 keymon.elf & # &> $SDCARD_PATH/keymon.txt &
 batmon.elf & # &> $SDCARD_PATH/batmon.txt &
@@ -108,6 +108,21 @@ AUTO_PATH=$USERDATA_PATH/auto.sh
 if [ -f "$AUTO_PATH" ]; then
 	"$AUTO_PATH"
 fi
+
+# bluealsa is not running, so start the services
+echo "Starting Bluetooth services..."
+
+# Start Bluetooth daemon
+/etc/bluetooth/bluetoothd start
+sleep 3
+
+# Start bluealsa in the background and log output
+bluealsa > /mnt/SDCARD/bluealsa.txt 2>&1 &
+# Turn Bluetooth power on
+bluetoothctl power on
+# Enable scanning for bluetooth devices
+bluetoothctl scan on > /mnt/SDCARD/bluetoothctl.txt 2>&1 &
+
 
 cd $(dirname "$0")
 
