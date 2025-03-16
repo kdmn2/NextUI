@@ -112,12 +112,15 @@ fi
 # bluealsa is not running, so start the services
 echo "Starting Bluetooth services..."
 
-# Start Bluetooth daemon
+# Start Bluetooth daemon 
 /etc/bluetooth/bluetoothd start
 sleep 3
 
+export BLUEALSA_TRANSPORT="a2dp-source"
+export BLUEALSA_PCM_BUFFER_SIZE=8192
+
 # Start bluealsa in the background and log output
-bluealsa -i hci0 -p a2dp-source > /mnt/SDCARD/bluealsa.txt 2>&1 &
+bluealsa > /mnt/SDCARD/bluealsa.txt 2>&1 &
 # Turn Bluetooth power on
 bluetoothctl power on
 # Enable scanning for bluetooth devices

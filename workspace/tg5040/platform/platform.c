@@ -679,7 +679,9 @@ void PLAT_setRumble(int strength) {
 }
 
 int PLAT_pickSampleRate(int requested, int max) {
-	return MIN(requested, max);
+	// return MIN(requested, max);
+	// temporary for bluetoth
+	return 44100;
 }
 
 char* PLAT_getModel(void) {
@@ -1091,11 +1093,7 @@ void PLAT_setBluetoothaudio() {
 					setenv("SDL_AUDIODRIVER", "alsa", 1);
 					char value[256]; // Adjust the size if needed
 
-					setenv("BLUEALSA_PCM_BUFFER_TIME","30000", 1);
-					setenv("BLUEALSA_PCM_PERIOD_TIME","10000", 1);
-					setenv("BLUEALSA_PCM_FORMAT","S16_LE", 1);
-					setenv("BLUEALSA_PREBUFFER_TIME","5000", 1);
-					setenv("BLUEALSA_TRANSPORT","LaptX-LL", 1);
+				
 					snprintf(value, sizeof(value), "bluealsa:HCI=hci0,DEV=%s", mac_address);
 					setenv("AUDIODEV", value, 1);
 			

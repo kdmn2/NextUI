@@ -53,9 +53,12 @@ void pair_device(const char *device_address) {
     
 
     // this needs to go in one line otherwise it will not be registerd under the agent and not reconnect automaticaly
-    snprintf(command, sizeof(command), "echo -e \"agent on\ndefault-agent\nscan on\npair %s\ntrust %s\nconnect %s\n\" | bluetoothctl",device_address,device_address,device_address);
+    snprintf(command, sizeof(command), "echo -e \"agent on\ndefault-agent\npair %s\ntrust %s\n\" | bluetoothctl",device_address);
 
     int result = system(command);
+    snprintf(command, sizeof(command), "bluetoothctl connect %s",device_address);
+
+    result = system(command);
 
     if (result == 0) {
         printf("Device %s paired successfully!\n", device_address);
