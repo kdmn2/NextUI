@@ -569,6 +569,14 @@ int GFX_getTextHeight(TTF_Font* font, const char* in_name, char* out_name, int m
 	
 	return text_height;
 }
+int GFX_getTextHeight(TTF_Font* font, const char* in_name, char* out_name, int max_width, int padding) {
+	int text_height;
+	strcpy(out_name, in_name);
+	TTF_SizeUTF8(font, out_name, NULL, &text_height);
+	text_height += padding;
+	
+	return text_height;
+}
 int GFX_getTextWidth(TTF_Font* font, const char* in_name, char* out_name, int max_width, int padding) {
 	int text_width;
 	strcpy(out_name, in_name);
@@ -634,7 +642,7 @@ void GFX_scrollTextSurface(TTF_Font* font, const char* in_name, SDL_Surface** ou
     if (text_width + padding * 2 > max_width) {
         frame_counter++;
         if (frame_counter >= 0) {  
-            text_offset += 1;  
+            text_offset += 2;  
             if (text_offset >= full_text_width) {
                 text_offset = 0; 
             }
