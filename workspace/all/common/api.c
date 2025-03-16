@@ -561,6 +561,14 @@ int GFX_truncateText(TTF_Font* font, const char* in_name, char* out_name, int ma
 	
 	return text_width;
 }
+int GFX_getTextHeight(TTF_Font* font, const char* in_name, char* out_name, int max_width, int padding) {
+	int text_height;
+	strcpy(out_name, in_name);
+	TTF_SizeUTF8(font, out_name, NULL, &text_height);
+	text_height += padding;
+	
+	return text_height;
+}
 int GFX_getTextWidth(TTF_Font* font, const char* in_name, char* out_name, int max_width, int padding) {
 	int text_width;
 	strcpy(out_name, in_name);
@@ -570,8 +578,14 @@ int GFX_getTextWidth(TTF_Font* font, const char* in_name, char* out_name, int ma
 	return text_width;
 }
 
+// scrolling text stuff
+static int text_offset = 0;
+
+void GFX_resetScrollText() {
+	text_offset = 0;
+}
 void GFX_scrollTextSurface(TTF_Font* font, const char* in_name, SDL_Surface** out_surface, int max_width, int padding, SDL_Color color, float transparency) {
-    static int text_offset = 0;
+    
     static int frame_counter = 0;
     int text_width, text_height;
 
@@ -596,7 +610,7 @@ void GFX_scrollTextSurface(TTF_Font* font, const char* in_name, SDL_Surface** ou
         return;
     }
 
-    if (text_width + padding * 2 < max_width) {
+    if (text_width < max_width) {
         text_offset = 0;  
     }
 
@@ -620,7 +634,7 @@ void GFX_scrollTextSurface(TTF_Font* font, const char* in_name, SDL_Surface** ou
     if (text_width + padding * 2 > max_width) {
         frame_counter++;
         if (frame_counter >= 0) {  
-            text_offset += 4;  
+            text_offset += 1;  
             if (text_offset >= full_text_width) {
                 text_offset = 0; 
             }
@@ -1668,7 +1682,7 @@ void SND_init(double sample_rate, double frame_rate) { // plat_sound_init
 	spec_in.freq = PLAT_pickSampleRate(sample_rate, MAX_SAMPLE_RATE);
 	spec_in.format = AUDIO_S16;
 	spec_in.channels = 2;
-	spec_in.samples = SAMPLES;
+	spec_in.samples = 512;
 	spec_in.callback = SND_audioCallback;
 	
 	if (SDL_OpenAudio(&spec_in, &spec_out)<0) LOG_info("SDL_OpenAudio error: %s\n", SDL_GetError());

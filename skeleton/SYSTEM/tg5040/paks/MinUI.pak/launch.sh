@@ -117,7 +117,7 @@ echo "Starting Bluetooth services..."
 sleep 3
 
 # Start bluealsa in the background and log output
-bluealsa > /mnt/SDCARD/bluealsa.txt 2>&1 &
+bluealsa -i hci0 -p a2dp-source > /mnt/SDCARD/bluealsa.txt 2>&1 &
 # Turn Bluetooth power on
 bluetoothctl power on
 # Enable scanning for bluetooth devices

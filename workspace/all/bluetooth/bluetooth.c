@@ -64,6 +64,24 @@ void pair_device(const char *device_address) {
     }
 
 }
+void remove_device(const char *device_address) {
+    char command[256];
+
+    printf("Pairing with device %s...\n", device_address);
+    
+
+    // this needs to go in one line otherwise it will not be registerd under the agent and not reconnect automaticaly
+    snprintf(command, sizeof(command), "echo -e \"remove %s\n\" | bluetoothctl",device_address);
+
+    int result = system(command);
+
+    if (result == 0) {
+        printf("Device %s remove successfully!\n", device_address);
+    } else {
+        printf("Failed to remove device %s\n", device_address);
+    }
+
+}
 
 // Function to scan for Bluetooth devices
 void scan_bluetooth_devices() {
@@ -168,6 +186,8 @@ void display_bluetooth_menu(SDL_Surface *screen) {
             selected_device = (selected_device + 1) % num_devices;
         } else if (PAD_justPressed(BTN_A)) {
             pair_device(devices[selected_device].address);
+        } else if (PAD_justPressed(BTN_X)) {
+            remove_device(devices[selected_device].address);
         }
 
         // Display the Bluetooth devices
@@ -188,7 +208,8 @@ void display_bluetooth_menu(SDL_Surface *screen) {
             SDL_BlitSurface(text, &(SDL_Rect){0, 0, max_width - SCALE1(BUTTON_PADDING * 2), text->h}, screen, &(SDL_Rect){SCALE1(PADDING + BUTTON_PADDING), SCALE1(PADDING + 4)});
             SDL_FreeSurface(text);
 
-			GFX_blitButtonGroup((char*[]){ "B","BACK","A","CONNECT", NULL }, 1, screen, 1);
+			GFX_blitButtonGroup((char*[]){ "B","BACK", NULL }, 1, screen, 0);
+			GFX_blitButtonGroup((char*[]){ "A","PAIR","X","UNPAIR", NULL }, 1, screen, 1);
         }
 
 
