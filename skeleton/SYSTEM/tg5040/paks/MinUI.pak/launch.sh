@@ -117,8 +117,10 @@ echo "Starting Bluetooth services..."
 sleep 3
 
 export BLUEALSA_TRANSPORT="a2dp-source"
-export BLUEALSA_PCM_BUFFER_SIZE=8192
-
+export BLUEALSA_PCM_BUFFER_SIZE=4048
+export BLUEALSA_VOLUME_CTL="softvol"
+export BLUEALSA_LATENCY=100
+export BLUEALSA_QUALITY="low"
 # Start bluealsa in the background and log output
 bluealsa > /mnt/SDCARD/bluealsa.txt 2>&1 &
 # Turn Bluetooth power on
