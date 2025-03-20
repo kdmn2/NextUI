@@ -299,7 +299,15 @@ void PLAT_quitVideo(void) {
 }
 
 void PLAT_clearVideo(SDL_Surface* screen) {
-	SDL_FillRect(screen, NULL, 0); // TODO: revisit
+	static uint32_t color1 = 0; // black
+	static uint32_t color2 = (uint32_t)((128 << 16) + (128 << 8) + (128 << 0)); // grey
+	
+	// swap color1 and color2
+	uint32_t tmp = color1;
+	color1 = color2;
+	color2 = tmp;
+
+	SDL_FillRect(screen, NULL, color2); // TODO: revisit
 }
 void PLAT_clearAll(void) {
 	PLAT_clearVideo(vid.screen); // TODO: revist
