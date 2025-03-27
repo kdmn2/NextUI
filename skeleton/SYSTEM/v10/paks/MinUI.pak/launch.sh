@@ -1,9 +1,11 @@
 #!/bin/sh
 
-# dmesg > /storage/TF1/dmesg.txt
+# dmesg > /storage/dmesg.txt
+# pull in all of Rocknix' little helpers
+. /etc/profile
 
 export PLATFORM="v10"
-export SDCARD_PATH="/storage/TF2"
+export SDCARD_PATH="/storage"
 export BIOS_PATH="$SDCARD_PATH/Bios"
 export SAVES_PATH="$SDCARD_PATH/Saves"
 export SYSTEM_PATH="$SDCARD_PATH/.system/$PLATFORM"
@@ -17,16 +19,12 @@ export PATH=$SYSTEM_PATH/bin:$PATH
 export LD_LIBRARY_PATH=$SYSTEM_PATH/lib:$LD_LIBRARY_PATH
 
 export SDL_AUDIODRIVER=alsa
-amixer cset name='Playback Path' SPK # or HP, seems to switch automatically
 
-cat /dev/zero > /dev/fb0
+amixer -c 0 cset name="${DEVICE_PLAYBACK_PATH}" ${DEVICE_PLAYBACK_PATH_SPK} 2>/dev/null
 
-export CPU_PATH=/sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
-export CPU_SPEED_PERF=1608000
-echo performance > /sys/devices/platform/ff400000.gpu/devfreq/ff400000.gpu/governor
-echo performance > /sys/devices/platform/dmc/devfreq/dmc/governor
-echo userspace > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-echo $CPU_SPEED_PERF > $CPU_PATH
+set_cpu_gov ondemand
+set_dmc_gov ondemand
+set_gpu_gov ondemand
 
 #######################################
 
@@ -38,24 +36,24 @@ mkdir -p "$LOGS_PATH"
 mkdir -p "$SHARED_USERDATA_PATH/.minui"
 AUTO_PATH=$USERDATA_PATH/auto.sh
 if [ -f "$AUTO_PATH" ]; then
-	"$AUTO_PATH" # &> $LOGS_PATH/auto.txt
+	"$AUTO_PATH" &> $LOGS_PATH/auto.txt
 fi
 
 cd $(dirname "$0")
 
 #######################################
 
+sway_fullscreen "minui"
+
 EXEC_PATH=/tmp/minui_exec
 NEXT_PATH="/tmp/next"
 touch "$EXEC_PATH" && sync
 while [ -f "$EXEC_PATH" ]; do
-	echo $CPU_SPEED_PERF > $CPU_PATH
 	minui.elf &> $LOGS_PATH/minui.txt
 	echo `date +'%F %T'` > "$DATETIME_PATH"
 	sync
 	
 	if [ -f $NEXT_PATH ]; then
-		echo $CPU_SPEED_PERF > $CPU_PATH
 		CMD=`cat $NEXT_PATH`
 		eval $CMD
 		rm -f $NEXT_PATH
@@ -63,3 +61,5 @@ while [ -f "$EXEC_PATH" ]; do
 		sync
 	fi
 done
+
+poweroff

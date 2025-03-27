@@ -23,7 +23,6 @@ int GetMute(void);
 void SetMute(int value); // 0-1
 
 int GetColortemp(void);
-
-int GetSleepDelay(void); // in msecs
+void SetColortemp(int value); // 0-40
 
 #endif // __msettings_h__

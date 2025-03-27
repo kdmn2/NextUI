@@ -97,6 +97,9 @@ static inline void SaveSettings(void) {
 int GetColortemp(void) { // 0-10
 	return settings->colortemperature;
 }
+void SetColortemp(int value) { // 0-40
+	// TODO
+}
 
 int GetBrightness(void) { // 0-10
 	return settings->brightness;
@@ -172,5 +175,3 @@ void SetHDMI(int value) { /* buh */ }
 
 int GetMute(void) { return 0; }
 void SetMute(int value) {}
-
-int GetSleepDelay(void) { return 30000; }
