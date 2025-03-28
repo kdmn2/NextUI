@@ -309,6 +309,14 @@ void SetVolume(int value) { // 0-20
 	SaveSettings();
 }
 
+char* GetTimezone(void) { // 0-20
+	return "Europe/Amsterdam";
+}
+void SetTimezone(char value) {
+
+}
+
+
 #define DISP_LCD_SET_BRIGHTNESS  0x102
 void SetRawBrightness(int val) { // 0 - 255
 	// if (settings->hdmi) return;

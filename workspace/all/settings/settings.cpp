@@ -62,7 +62,10 @@ static const std::vector<std::string> font_names = {"OG", "Next"};
 static const std::vector<std::any> timeout_secs = {0U, 5U, 10U, 15U, 30U, 45U, 60U, 90U, 120U, 240U, 360U, 600U};
 static const std::vector<std::string> timeout_labels = {"Never", "5s", "10s", "15s", "30s", "45s", "60s", "90s", "2m", "4m", "6m", "10m"};
 
+
 static const std::vector<std::string> on_off = {"Off", "On"};
+
+static const std::vector<std::string> timezones = {"Never", "5s", "10s", "15s", "30s", "45s", "60s", "90s", "2m", "4m", "6m", "10m"};
 
 int main(int argc, char *argv[])
 {
@@ -79,6 +82,7 @@ int main(int argc, char *argv[])
         PAD_init();
         PWR_init();
 
+    
         signal(SIGINT, sigHandler);
         signal(SIGTERM, sigHandler);
 
@@ -154,7 +158,11 @@ int main(int argc, char *argv[])
             MenuItem{Generic, "Suspend timeout", "Time before device goes to sleep (0-600s)", timeout_secs, timeout_labels, []() -> std::any
                     { return CFG_getSuspendTimeoutSecs(); }, [](const std::any &value)
                     { CFG_setSuspendTimeoutSecs(std::any_cast<uint32_t>(value)); }},
+                    MenuItem{Generic, "Suspend timeout", "Time before device goes to sleep (0-600s)", timeout_secs, timezones, []() -> std::any
+                        { return CFG_getSuspendTimeoutSecs(); }, [](const std::any &value)
+                        { CFG_setSuspendTimeoutSecs(std::any_cast<uint32_t>(value)); }},
         });
+
 
         ctx.menu = new MenuList(MenuItemType::List, "Main",
         {

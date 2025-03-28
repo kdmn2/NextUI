@@ -449,6 +449,8 @@ void PLAT_setLedInbrightness(LightSettings *led);
 void PLAT_setLedEffectSpeed(LightSettings *led);
 void PLAT_setLedEffectCycles(LightSettings *led);
 
+char **PLAT_getTimezones(const char *base_path, int *count);
+
 ///////////////////////////////
 
 // This should move to cfg.h/.c

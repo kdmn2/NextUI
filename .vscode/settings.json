@@ -102,6 +102,8 @@
     "numeric": "cpp",
     "random": "c",
     "bit": "cpp",
-    "*.inc": "c"
+    "*.inc": "c",
+    "dirent.h": "c",
+    "system_error": "cpp"
   },
 }

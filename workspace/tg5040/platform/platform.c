@@ -22,6 +22,7 @@
 #include "scaler.h"
 #include <time.h>
 #include <pthread.h>
+#include <dirent.h>
 
 int is_brick = 0;
 volatile int useAutoCpu = 1;
@@ -1171,5 +1172,64 @@ void PLAT_setLedColor(LightSettings *led)
         fclose(file);
     }
     PLAT_chmod(filepath, 0);
+}
+
+#define MAX_TIMEZONES 1024  // Adjust as needed
+#define MAX_PATH_LEN 512     // Max length of a file path
+
+char **PLAT_getTimezones(const char *base_path, int *count) {
+    struct dirent *entry;
+    struct stat statbuf;
+    char path[MAX_PATH_LEN];
+    DIR *dir = opendir(base_path);
+
+    if (!dir) {
+        perror("opendir");
+        return NULL;
+    }
+
+    // Allocate memory for the array
+    char **timezones = malloc(MAX_TIMEZONES * sizeof(char *));
+    if (!timezones) {
+        perror("malloc");
+        closedir(dir);
+        return NULL;
+    }
+
+    *count = 0; // Initialize count
+
+    while ((entry = readdir(dir)) != NULL) {
+        // Ignore "." and ".."
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+
+        snprintf(path, sizeof(path), "%s/%s", base_path, entry->d_name);
+
+        if (stat(path, &statbuf) == 0) {
+            if (S_ISDIR(statbuf.st_mode)) {
+                // Recursively scan subdirectory and merge results
+                int sub_count = 0;
+                char **sub_timezones = PLAT_getTimezones(path, &sub_count);
+                if (sub_timezones) {
+                    for (int i = 0; i < sub_count && *count < MAX_TIMEZONES; i++) {
+                        timezones[*count] = sub_timezones[i];  // Move sub-timezones into main array
+                        (*count)++;
+                    }
+                    free(sub_timezones); // Free the sub-array container (not the strings)
+                }
+            } else {
+                // Store the file path
+                if (*count < MAX_TIMEZONES) {
+                    timezones[*count] = strdup(path);
+                    (*count)++;
+                } else {
+                    fprintf(stderr, "Too many timezones, increase MAX_TIMEZONES\n");
+                }
+            }
+        }
+    }
+    closedir(dir);
+    return timezones;
 }
 

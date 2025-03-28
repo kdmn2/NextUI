@@ -7,6 +7,7 @@ void QuitSettings(void);
 int GetBrightness(void);
 int GetColortemp(void);
 int GetVolume(void);
+char* GetTimezone(void);
 
 void SetRawBrightness(int value); // 0-255
 void SetRawColortemp(int value); // 0-255
@@ -15,6 +16,7 @@ void SetRawVolume(int value); // 0-100
 void SetBrightness(int value); // 0-10
 void SetColortemp(int value); // 0-10
 void SetVolume(int value); // 0-20
+void SetTimezone(char value); // 0-20
 
 int GetJack(void);
 void SetJack(int value); // 0-1
